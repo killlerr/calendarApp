@@ -1,5 +1,8 @@
 var mysql = require('mysql')
 var SunCalc = require('suncalc');
+var moment = require('moment');
+
+
 var db;
 var settings = {
 
@@ -46,7 +49,7 @@ function test(req, res, next) {
         return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
       }
     
-    for(var i=0; i<1; i++){
+    for(var i=0; i<8; i++){
         var today=new Date(setDate.getTime()+(1000*60*60*24*i));
         var todaySunCalc=SunCalc.getTimes( today,6.927079,79.861244);
         var sunrise=todaySunCalc.sunrise.getTime();
@@ -54,20 +57,46 @@ function test(req, res, next) {
         var difference = sunset - sunrise;
         var eighthPotion = difference/8;
         // switch
-        // var day = 
-        // switch(day) {
-        //     case x:
-        //       code block
-        //       break;
-        //     case y:
-        //       code block
-        //       break;
-        //     default:
-        //       code block
-        //   }
+        var dayName = moment(today).format('dddd');
+        var day;
+        switch (today.getDay()) {
+            case 0:
+                day = "Sunday";
+                var rahuStart = sunrise + (eighthPotion*7);
+                var rahuEnd = sunrise + (eighthPotion*8);              
+                break;
+            case 1:
+                day = "Monday";
+                var rahuStart = sunrise + (eighthPotion*1);
+                var rahuEnd = sunrise + (eighthPotion*2);              
+                break;
+            case 2:
+                day = "Tuesday";
+                var rahuStart = sunrise + (eighthPotion*6);
+                var rahuEnd = sunrise + (eighthPotion*7);              
+                break;
+            case 3:
+                day = "Wednesday";
+                var rahuStart = sunrise + (eighthPotion*4);
+                var rahuEnd = sunrise + (eighthPotion*5);              
+                break;
+            case 4:
+                day = "Thursday";
+                var rahuStart = sunrise + (eighthPotion*5);
+                var rahuEnd = sunrise + (eighthPotion*6);              
+                break;
+            case 5:
+                day = "Friday";
+                var rahuStart = sunrise + (eighthPotion*3);
+                var rahuEnd = sunrise + (eighthPotion*4);              
+                break;
+            case 6:
+                day = "Saturday";
+                var rahuStart = sunrise + (eighthPotion*2);
+                var rahuEnd = sunrise + (eighthPotion*3);                            
+          }
         //Monday
-        var rahuStart = sunrise + (eighthPotion*4);
-        var rahuEnd = sunrise + (eighthPotion*5);
+
         // var sunrise_slice =sunrise.slice(16,21);
         // var sunset_slice =sunset.slice(16,21);
         console.log('-----Day--------');
@@ -82,7 +111,11 @@ function test(req, res, next) {
         console.log('-----eighthPotion-----');
         console.log(msToTime(eighthPotion));
         console.log('-----12 hour clock-----');
-        console.log('12 hour clock');
+        console.log('12 clock');
+        console.log('-----End-----');
+        console.log('-----day name-----');
+        console.log('case: ' + day);
+        console.log('today: ' + dayName);
         console.log('-----End-----');
 
         // var sql = `INSERT INTO date_info (sunrise, sunset) VALUES ( '${sunrise_slice}' ,  '${sunset_slice}')`;
