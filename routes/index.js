@@ -8,48 +8,66 @@ router.get('/today/:year', function (req, res, next) {
     var year = req.params.year;
     var array=[];
     //var get_all = 'SELECT date,sunrise,sunset,rahu_morning_start,rahu_morning_end,rahu_night_start,rahu_night_end,suba_dishawa,maru_dishawa,description,image_url,special_date_id_1,special_date_id_2 FROM horoscopes,special_dates WHERE horoscopes.special_date_id_1=special_dates.id AND year(date)=? OR horoscopes.special_date_id_2=special_dates.id AND year(date)=?';
-    /*//var get_all = 'SELECT * FROM horoscopes WHERE year(date)='+mysql.escape(year);*/
-    async function f() {
+    var get_all = 'SELECT * FROM horoscopes WHERE year(date)='+mysql.escape(year);
+    connection.query(get_all, function (err, result) {
+        if(err)throw err;
+        f(result);
+});
+
+    async function f(result) {
 
         let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve("done!"), 1000)
-        });
 
-        let result = await promise; // wait till the promise resolves (*)
+            for(var i=0;i<result.length;i++){
 
-        alert(result); // "done!"
-    }
-
-    f();
-
-    /*connection.query(get_all,[year,year], function (err, result) {
-      if (err) throw err;
-res.json({result});
-    /!* for(var i=0;i<result.length;i++){
                 var special_date_id_1 = result[i].special_date_id_1;
                 var special_date_id_2 = result[i].special_date_id_2;
 
-                if(special_date_id_1!=0&& special_date_id_2==0){
-
-                    var a='SELECT image_url FROM special_dates WHERE id=?';
-                connection.query(a,[special_date_id_1],function (err,row) {
-
-                    array.push(result[i]);
-                    array.push(row);
-                })
-                }
-                else if(special_date_id_1==0&& special_date_id_2!=0){
-
-                    var a='SELECT image_url FROM special_dates WHERE id=?';
-                    connection.query(a,[special_date_id_2],function (err,row) {
-
-                        array.push(result[i]);
+                var a='SELECT image_url FROM special_dates WHERE id=? AND(id)!=? OR id=? AND (id)!=?';
+                    connection.query(a,[special_date_id_1,0,special_date_id_2,0],function (err,row) {
                         array.push(row);
                     })
                 }
-            }*!/
-         // res.json({array});
-    });*/
+                resolve(array);
+        });
+        promise.resolve().then(res.json({array}));
+
+        /*let bb = await promise; // wait till the promise resolves (*)
+
+        res.json({bb});*/
+    }
+
+
+
+
+ /*connection.query(get_all,[year,year], function (err, result) {
+   if (err) throw err;
+res.json({result});
+ /!* for(var i=0;i<result.length;i++){
+             var special_date_id_1 = result[i].special_date_id_1;
+             var special_date_id_2 = result[i].special_date_id_2;
+
+             if(special_date_id_1!=0&& special_date_id_2==0){
+
+                 var a='SELECT image_url FROM special_dates WHERE id=?';
+             connection.query(a,[special_date_id_1],function (err,row) {
+
+                 array.push(result[i]);
+                 array.push(row);
+             })
+             }
+             else if(special_date_id_1==0&& special_date_id_2!=0){
+
+                 var a='SELECT image_url FROM special_dates WHERE id=?';
+                 connection.query(a,[special_date_id_2],function (err,row) {
+
+                     array.push(result[i]);
+                     array.push(row);
+                 })
+             }
+         }*!/
+      // res.json({array});
+ });*/
 });
 
 router.get('/month_images/:month', function (req, res, next) {
